@@ -8,47 +8,54 @@ interface Sentence {
 const Sentence = () => {
   const [counter, setCounter] = useState(1);
   const [sentence, setSentence] = useState("");
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     getSentence();
-  }, []);
+  }, [counter]);
 
   const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
   const getSentence = () => {
     axios.get<Sentence>(url)
       .then(response => {
         const responseData = response.data.data.sentence;
-        console.log("resp: ", responseData);
-        const scrambledSentence = responseData.split(" ").map(word => {
-          console.log("word: ", word);
-          const wordArr = word.split(" ");
-          console.log("wordArr: ", wordArr);
-          const letterArr = wordArr[0].split("");
-          console.log("letterArr: ", letterArr);
-
+        const scrambledSentence: string[] = responseData.split(" ").map((word:string)  => {
+          const wordArr: string[] = word.split(" ");
+          const letterArr: string[] = wordArr[0].split("");
+          
           if (letterArr.length > 2) {
-            let letterArrCopy = new Array(letterArr);
-            console.log("letterArrCopy: ", letterArrCopy[0]);
-            letterArrCopy[0].splice(0, 1);
-            letterArrCopy[0].splice(letterArrCopy[0].length - 1, 1);
-            console.log("letterArrCopy: ", letterArrCopy[0]);
-            letterArrCopy[0].sort(() => 0.5 - Math.random());
-            console.log("letterArrCopy: ", letterArrCopy[0]);
-            console.log('letterArr[0]: ', letterArr);
-            letterArrCopy[0].unshift(letterArr[0]);
-            letterArrCopy[0].push(letterArr[letterArr.length - 1]);
-            console.log("letterArrCopy: ", letterArrCopy[0]);
+            const letterArrCopy: string[] = [...letterArr];
+            letterArrCopy.splice(0, 1);
+            letterArrCopy.splice(letterArrCopy.length - 1, 1);
+            
+            if (letterArrCopy.length === 2) {
+              const temp: string = letterArrCopy[1];
+              letterArrCopy[1] = letterArrCopy[0];
+              letterArrCopy[0] = temp;
+              
+            } else {
+              letterArrCopy.sort(() => 0.5 - Math.random());
+            }
+            
+            letterArrCopy.unshift(letterArr[0]);
+            letterArrCopy.push(letterArr[letterArr.length - 1]);
+            const rejoinWord = letterArrCopy.join('');
+            return rejoinWord;
+
+          } else {
+            const oneLetterArrToString = letterArr.toString();
+            return oneLetterArrToString;
           }
         });
-
+        const rejoinScrambledSentence: string = scrambledSentence.join(" ");
         
-        setSentence(scrambledSentence);
+        setSentence(rejoinScrambledSentence);
       })
       .catch(error => console.error(`Error: ${error}`));
   }
 
   return (
-    <p id="scrambled-word">{sentence}</p>
+    <h2 id="scrambled-word">{sentence}</h2>
   );
 }
 
