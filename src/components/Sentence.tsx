@@ -58,10 +58,10 @@ import axios from 'axios';
 //     <h2 id="scrambled-word">{sentence}</h2>
 //   );
 // }
-const Sentence = (props: any) => {
-
+const Sentence = (props: {sentence: any[]}) => {
+  console.log("props.sentence: ", props.sentence[0]);
   return (
-    <h2 id="scrambled-word">{props.sentence}</h2>
+    <h2 id="scrambled-word">{props.sentence[0]}</h2>
   );
 }
 
