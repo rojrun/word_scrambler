@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../sass/App.scss';
 
 const App = () => {
-  const [counter, setCounter] = useState(1);
+  const [counter, setCounter] = useState(3);
   const [sentence, setSentence] = useState<any[]>([]);
   const [score, setScore] = useState(0);
 
@@ -20,12 +20,12 @@ const App = () => {
     axios.get<any>(url)
       .then(response => {
         const data: string = response.data.data.sentence;
-        const scrambledSentence = data.split(" ").map((word: string): string[]  => {
+        const sentenceArr = data.split(" ").map((word: string): string[]  => {
           const wordArr: string[] = word.split("");
           return wordArr;
         });
       
-        setSentence([...sentence, scrambledSentence]);
+        setSentence([...sentence, sentenceArr]);
       })
       .catch(error => console.error(`Error: ${error}`));
   }
