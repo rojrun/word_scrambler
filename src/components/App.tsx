@@ -7,25 +7,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../sass/App.scss';
 
 const App = () => {
-  const [counter, setCounter] = useState(3);
-  const [sentence, setSentence] = useState<any[]>([]);
+  const [counter, setCounter] = useState(7);
+  const [sentence, setSentence] = useState<any>();
   const [score, setScore] = useState(0);
 
   useEffect(() => {
     getSentence();
   }, [counter]);
 
-  const url: string = `https://api.hatchways.io/assessment/sentences/${counter}`;
+  const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
   const getSentence = (): void => {
-    axios.get<any>(url)
+    axios.get(url)
       .then(response => {
         const data: string = response.data.data.sentence;
-        const sentenceArr = data.split(" ").map((word: string): string[]  => {
-          const wordArr: string[] = word.split("");
+        const sentenceArr = data.split(" ").map((word: string): string[] => {
+          const wordArr = word.split("");
           return wordArr;
         });
-      
-        setSentence([...sentence, sentenceArr]);
+        
+        setSentence(sentenceArr);
       })
       .catch(error => console.error(`Error: ${error}`));
   }
@@ -36,8 +36,8 @@ const App = () => {
       <Sentence sentence={sentence} />
       <p>Guess the sentence! Start typing.</p>
       <p>The yellow blocks are meant for spaces.</p> 
-      <Score score={score}/>
-      <GuessingBlocks />
+      <Score score={score} />
+      <GuessingBlocks sentence={sentence} />
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 
-const GuessingBlocks = () => {
-
+interface Props {
+  sentence: string[][]
+}
+const GuessingBlocks = ({sentence}: Props) => {
+  console.log("guessingblocks sentence: ", sentence);
 
   return (
     <div>
