@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../sass/App.scss';
 
 const App = () => {
-  const [counter, setCounter] = useState(7);
+  const [counter, setCounter] = useState(1);
   const [sentence, setSentence] = useState<any>();
   const [score, setScore] = useState(0);
 
@@ -15,6 +15,7 @@ const App = () => {
     getSentence();
   }, [counter]);
 
+  // Fetch sentence from API, convert string to nested array of characters
   const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
   const getSentence = (): void => {
     axios.get(url)
@@ -31,7 +32,7 @@ const App = () => {
   }
 
   return (
-    <div className="App container">
+    <div className="container text-center">
       <h1>Word Scrambler</h1>
       <Sentence sentence={sentence} />
       <p>Guess the sentence! Start typing.</p>
