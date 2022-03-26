@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../sass/App.scss';
 
 const App = () => {
-  const [counter, setCounter] = useState(1);
+  const [counter, setCounter] = useState(2);
   const [sentence, setSentence] = useState<any>();
   const [score, setScore] = useState(0);
 
@@ -25,7 +25,6 @@ const App = () => {
           const wordArr = word.split("");
           return wordArr;
         });
-        
         setSentence(sentenceArr);
       })
       .catch(error => console.error(`Error: ${error}`));
