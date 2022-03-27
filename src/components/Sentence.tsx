@@ -6,7 +6,7 @@ interface Props {
 
 const Sentence = ({sentence = []}: Props) => {
   const [scrambledSentence, setScrambledSentence] = useState<string>("");
-
+  
   useEffect(() => {
     scramble();
   }, [sentence]);

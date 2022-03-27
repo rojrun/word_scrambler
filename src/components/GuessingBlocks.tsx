@@ -4,54 +4,60 @@ interface Props {
   sentence: string[][]
 }
 
+// Render blocks based on shape of Sentence array
 const GuessingBlocks = ({sentence = []}: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  useEffect(() => {
+    if (inputRef.current !== null) {
+      (inputRef.current.firstChild?.firstChild as HTMLElement)?.focus();     
+    }
+  }, [sentence]);
 
   const handleGuess = (e: React.ChangeEvent<HTMLInputElement>, wordIn: number, charIn: number): void => {
     const guess = e.target.value;
     const element = e.target;
-    console.log("element: ", e);
-    console.log("char of sentence: ", sentence[wordIn][charIn]);
-    if (e.target.value === sentence[wordIn][charIn]) {
-      console.log("they match");
-      element.className += " bg-success text-white";
-      
-    }
-  }
-
-  const handleSpacebar = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("e: ", e.target);
-    if (e.key === " ") {
-      // e.target.className.remove("bg-warning")
-    }
+    if (guess === sentence[wordIn][charIn]) {
+      console.log("e: ", e);
+      console.log("guess: ", guess);
+      if (element.classList.contains("bg-warning")) {
+        console.log("element: ", element);
+        element.classList.remove("bg-warning");
+        element.className += " bg-success text-white";
+        console.log("spaces (element.nextSibling as HTMLElement)? : ", (element.nextSibling));
+      } else {
+        element.className += " bg-success text-white";
+        console.log("no space (element.nextSibling as HTMLElement)? : ", (element.nextSibling));
+      }    
+      (element.nextElementSibling as HTMLElement)?.focus();
+      console.log("ref: ", inputRef);
+    } 
   }
 
   return (
-    <div>
+    <div ref={inputRef}>
       {
         sentence.map((nestedArr: string[], wordInd: number) => {
           return (
             <div className="row" key={wordInd + 1}>
               {
                 nestedArr.map((char: string, charInd: number) => {
+                  let bgColor = "";
+                  if (charInd === 0 && char === " ") {
+                    bgColor = "bg-warning";
+                  }
+                
                   return (
-                    <input 
-                      className="col text-center m-2" type="text" id="guess" autoComplete="off"
-                      onChange={(e) => handleGuess(e, wordInd, charInd)} key={charInd + 1} maxLength={1} data-answer={false}
+                    <input
+                      className={`col text-center m-2 ${bgColor}`} type="text" id="guess" autoComplete="off"
+                      onChange={(e) => handleGuess(e, wordInd, charInd)} key={charInd + 1} maxLength={1}
                     />
                   );
                 })
               }
-              {  
-                wordInd < sentence.length - 1 ? 
-                  <input
-                    className="col text-center m-2 bg-warning" type="text" id="space" autoComplete="off" 
-                    onKeyDown={handleSpacebar} maxLength={1} data-answer={false}
-                  />
-                  : null
-              }
             </div>
           );
-        })
+        })      
       }
     </div>
   );
