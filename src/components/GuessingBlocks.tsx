@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {createRef, useMemo, useRef, useEffect, useState} from 'react';
 
 interface Props {
   sentence: string[][];
@@ -8,7 +8,13 @@ interface Props {
 
 // Render blocks based on shape of Sentence array
 const GuessingBlocks = ({sentence = [], setScore, score}: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [cursor, setCursor] = useState([0, 0]);
+  // const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef:any = useMemo(
+    () => sentence.map((word) => word.map((_) => createRef())),
+    [sentence]
+  );
+  const [values, setValues] = useState(sentence.map((word) => word.map(() => "")));
   const [correct, setCorrect] = useState<number>(0);
   const [totalInputs, setTotalInputs] = useState<number>(0);
   
@@ -20,8 +26,10 @@ const GuessingBlocks = ({sentence = [], setScore, score}: Props) => {
     //   (inputRef.current.firstChild?.firstChild as HTMLElement)?.focus();     
       
     // }
+    const [wordInd, charInd] = cursor;
+    inputRef[wordInd]?.[charInd]?.current.focus();
     countTotalInputs();
-  }, [sentence, correct]);
+  }, [sentence, correct, cursor]);
 
   const countTotalInputs = () => {
     let total: number = 0;
@@ -50,11 +58,11 @@ const GuessingBlocks = ({sentence = [], setScore, score}: Props) => {
 
   return (
     <div>
-      <div ref={inputRef}>
+      <div>
         {
           sentence.map((nestedArr: string[], wordInd: number) => {
             return (
-              <div className="row" key={wordInd + 1}>
+              <div className="row" key={wordInd}>
                 {
                   nestedArr.map((char: string, charInd: number) => {
                     let bgColor = "";
@@ -65,7 +73,7 @@ const GuessingBlocks = ({sentence = [], setScore, score}: Props) => {
                     return (
                       <input
                         className={`col text-center m-1 px-1 ${bgColor}`} type="text" id="guess" autoComplete="off"
-                        onChange={(e) => handleGuess(e, wordInd, charInd)} key={charInd + 1} maxLength={1}
+                        onChange={(e) => handleGuess(e, wordInd, charInd)} key={charInd} maxLength={1} ref={inputRef[wordInd][charInd]}
                       />
                     );
                   })
