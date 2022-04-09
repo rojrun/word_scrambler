@@ -13,7 +13,7 @@ const App = () => {
 
   useEffect(() => {
     getSentence();
-  }, [counter]);
+  }, [counter, score]);
 
   // Fetch sentence from API, convert string to nested array of characters
   const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
@@ -55,7 +55,7 @@ const App = () => {
       <p>Guess the sentence! Start typing.</p>
       <p>The yellow blocks are meant for spaces.</p> 
       <Score score={score} />
-      <GuessingBlocks sentence={sentence} setScore={setScore} score={score} />
+      <GuessingBlocks sentence={sentence} score={score} setScore={setScore} counter={counter} setCounter={setCounter} />
     </div>
   );
 }

@@ -1,10 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
-const Score = (props: any) => {
-  console.log("score: ", props.score);
-  useEffect(() => {}, [props.score]);
+interface Props {
+  score: number
+}
+
+const Score = ({score}: Props) => {
   return (
-    <p>Score: {props.score}</p>
+    <p>Score: {score}</p>
   );
 }
 
