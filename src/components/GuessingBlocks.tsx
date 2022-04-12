@@ -10,7 +10,7 @@ interface Props {
 
 // Render blocks based on shape of Sentence array
 const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: Props) => {
-  // const [values, setValues] = useState<string[][]>([]);
+  const [values, setValues] = useState<string[][] | undefined>([]);
   const [cursor, setCursor] = useState([0, 0]);
   const [correct, setCorrect] = useState<number>(0);
   const [totalInputs, setTotalInputs] = useState<number>(0);
@@ -31,6 +31,17 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
       setScore(score + 1);
     }
   }, [correct, totalInputs]);
+
+  const memoizedValues = useMemo(() => {
+    if (values !== undefined && !values.length) {
+      sentence.map((word: string[]) => {
+        const newWordArr = word.map((_char) => {
+          return "";
+        });
+        setValues(values => [...values as string[][], newWordArr]);
+      });  
+    }
+  }, [sentence]);
   
   const handleGuess = (char: string, wordIndex: number, charIndex: number) => {
     if (char === sentence[wordIndex][charIndex]) {
@@ -51,40 +62,47 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
             : [_wordIndex + 1, 0]    
         );
         
-        // setValues((values): any => {
-        //   values.map((_word, _wordIndex) => {
-        //     if (wordIndex !== _wordIndex) return _word;
-        //     return _word.map((_char, _charIndex) => {
-        //       if (charIndex !== _charIndex) return _char;
-        //       return char;
-        //     })
-        //   })  
-        // });
-        
+        const newValuesArr = values!.map((_word, _wordIndex) => {
+          if (wordIndex === _wordIndex) {
+            const newWord = _word.map((_char, _charIndex) => {
+              if (charIndex === _charIndex) {
+                return char;
+              } else {
+                return _char;
+              }
+            });
+            return newWord;
+          } else {
+            return _word;
+          }
+        });  
+        setValues(newValuesArr);
       }
     }  
   }
 
   const handleOnClick = () => {
-    setCursor([0, 0]);
+    // document.querySelectorAll('[id=guess]').forEach((element) => {
+    //   element.classList.remove("bg-success text-white");
+    // });
+    // console.log("document: ", document.querySelectorAll('[id=guess]'));
+    setValues([]);
     setCorrect(0);
     setTotalInputs(0);
     setCounter(counter + 1);
+    setCursor([0, 0]);
   }
 
   useEffect(() => {
-    // sentence.map((word: string[]) => {
-    //   const newWordArr = word.map(() => "");
-    //   setValues(values => [...values, newWordArr]);
-    // });
     const [wordIndex, charIndex] = cursor;
     inputRef[wordIndex]?.[charIndex]?.current.focus();
     countTotalInputs();
     correctCallback();   
+    memoizedValues;
   }, [sentence, totalInputs, cursor, inputRef]);
   
   return (
-    <div>
+    <div id="blocks">
       <div>
         {
           sentence.map((nestedArr: string[], wordIndex: number) => {
@@ -105,11 +123,11 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
                         key={charIndex} 
                         maxLength={1}
                         ref={inputRef[wordIndex][charIndex]}
-                        // value={
-                        //   values && values.length 
-                        //   ? values[wordIndex][charIndex]
-                        //   : []
-                        // } 
+                        value={
+                          values && values.length 
+                          ? values[wordIndex][charIndex]
+                          : []
+                        } 
                       />
                     );
                   })
