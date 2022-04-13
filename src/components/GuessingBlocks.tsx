@@ -15,6 +15,7 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
   const [correct, setCorrect] = useState<number>(0);
   const [totalInputs, setTotalInputs] = useState<number>(0);
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const inputRef: any = useMemo(
     () => sentence.map((word) => word.map((_) => createRef())),
     [sentence]
@@ -49,11 +50,9 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
       if (input !== null) {
         if (input.classList.contains("bg-warning")) {
           input.classList.remove("bg-warning");
-          input.className += " bg-success text-white";
-        } else {
-          input.className += "bg-success text-white";
-        }
-        
+        }  
+        input.classList.add("bg-success", "text-white");
+
         setCorrect(correct + 1);     
 
         setCursor(([_wordIndex, _charIndex]) => 
@@ -82,15 +81,18 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
   }
 
   const handleOnClick = () => {
-    // document.querySelectorAll('[id=guess]').forEach((element) => {
-    //   element.classList.remove("bg-success text-white");
-    // });
-    // console.log("document: ", document.querySelectorAll('[id=guess]'));
+    document.querySelectorAll('[id=guess]').forEach((element) => {
+      const classNames = ["bg-success", "text-white"];
+      if (classNames.some(classNames => element.classList.contains(classNames))) {
+        classNames.forEach(item => element.classList.remove(item));
+      }
+    });
+    
     setValues([]);
     setCorrect(0);
     setTotalInputs(0);
-    setCounter(counter + 1);
     setCursor([0, 0]);
+    setCounter(counter + 1);
   }
 
   useEffect(() => {
@@ -99,28 +101,24 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
     countTotalInputs();
     correctCallback();   
     memoizedValues;
+    buttonRef.current?.focus();
   }, [sentence, totalInputs, cursor, inputRef]);
   
   return (
-    <div id="blocks">
-      <div>
+    <div>
+      <div id="blocks">
         {
           sentence.map((nestedArr: string[], wordIndex: number) => {
             return (
-              <div className="row" key={wordIndex}>
+              <div key={wordIndex} className="row">
                 {
                   nestedArr.map((char: string, charIndex: number) => {
-                    let bgColor = "";
-                    if (char === " ") {
-                      bgColor = "bg-warning";
-                    }
-                    
                     return (
                       <input
-                        type="text" id="guess" autoComplete="off"
-                        className={`col text-center m-1 px-1 ${bgColor}`} 
-                        onChange={(e) => handleGuess(e.target.value, wordIndex, charIndex)}
                         key={charIndex} 
+                        type="text" id="guess" autoComplete="off"
+                        className={`col text-center m-1 px-0 ${/\s/.test(char) ? "bg-warning" : ""}`}
+                        onChange={(e) => handleGuess(e.target.value, wordIndex, charIndex)}
                         maxLength={1}
                         ref={inputRef[wordIndex][charIndex]}
                         value={
@@ -142,6 +140,7 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
           <button 
             type="button" 
             className="btn btn-success px-4 m-3" 
+            ref={buttonRef}
             onClick={handleOnClick}
           >
             Next
