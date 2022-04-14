@@ -6,11 +6,12 @@ interface Props {
   setScore: Function;
   counter: number;
   setCounter: Function;
+  values: string[][] | undefined;
+  setValues: Function;
 }
 
 // Render blocks based on shape of Sentence array
-const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: Props) => {
-  const [values, setValues] = useState<string[][] | undefined>([]);
+const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter, values, setValues}: Props) => {
   const [cursor, setCursor] = useState([0, 0]);
   const [correct, setCorrect] = useState<number>(0);
   const [totalInputs, setTotalInputs] = useState<number>(0);
@@ -33,17 +34,6 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
     }
   }, [correct, totalInputs]);
 
-  const memoizedValues = useMemo(() => {
-    if (values !== undefined && !values.length) {
-      sentence.map((word: string[]) => {
-        const newWordArr = word.map((_char) => {
-          return "";
-        });
-        setValues(values => [...values as string[][], newWordArr]);
-      });  
-    }
-  }, [sentence]);
-  
   const handleGuess = (char: string, wordIndex: number, charIndex: number) => {
     if (char === sentence[wordIndex][charIndex]) {
       const input = inputRef[wordIndex][charIndex].current;
@@ -81,18 +71,17 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
   }
 
   const handleOnClick = () => {
+    setCounter(counter + 1);
+    setValues([]);
+    setCorrect(0);
+    setTotalInputs(0);
+    setCursor([0, 0]);
     document.querySelectorAll('[id=guess]').forEach((element) => {
       const classNames = ["bg-success", "text-white"];
       if (classNames.some(classNames => element.classList.contains(classNames))) {
         classNames.forEach(item => element.classList.remove(item));
       }
     });
-    
-    setValues([]);
-    setCorrect(0);
-    setTotalInputs(0);
-    setCursor([0, 0]);
-    setCounter(counter + 1);
   }
 
   useEffect(() => {
@@ -100,9 +89,8 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
     inputRef[wordIndex]?.[charIndex]?.current.focus();
     countTotalInputs();
     correctCallback();   
-    memoizedValues;
     buttonRef.current?.focus();
-  }, [sentence, totalInputs, cursor, inputRef]);
+  }, [sentence, totalInputs, cursor, inputRef, counter]);
   
   return (
     <div>
@@ -110,12 +98,12 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
         {
           sentence.map((nestedArr: string[], wordIndex: number) => {
             return (
-              <div key={wordIndex} className="row">
+              <div key={wordIndex.toString()} className="row">
                 {
                   nestedArr.map((char: string, charIndex: number) => {
                     return (
                       <input
-                        key={charIndex} 
+                        key={charIndex.toString()} 
                         type="text" id="guess" autoComplete="off"
                         className={`col text-center m-1 px-0 ${/\s/.test(char) ? "bg-warning" : ""}`}
                         onChange={(e) => handleGuess(e.target.value, wordIndex, charIndex)}
@@ -136,15 +124,15 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter}: P
         }
       </div>
       {
-        correct === totalInputs ? 
-          <button 
-            type="button" 
-            className="btn btn-success px-4 m-3" 
-            ref={buttonRef}
-            onClick={handleOnClick}
-          >
-            Next
-          </button>
+        correct === totalInputs 
+          ? <button 
+              type="button" 
+              className="btn btn-success px-4 m-3" 
+              ref={buttonRef}
+              onClick={handleOnClick}
+            >
+              Next
+            </button>
           : null
       }
     </div>
