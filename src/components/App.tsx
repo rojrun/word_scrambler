@@ -1,19 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import axios from 'axios';
 import Sentence from './Sentence';
 import Score from './Score';
 import GuessingBlocks from './GuessingBlocks';
+import Winner from './Winner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../sass/App.scss';
 
 const App = () => {
-  const [counter, setCounter] = useState(1);
+  const [counter, setCounter] = useState<number>(1);
   const [sentence, setSentence] = useState<any>();
-  const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    getSentence();
-  }, [counter]);
+  const [score, setScore] = useState<number>(0);
+  const [values, setValues] = useState<string[][]>([]);
 
   // Fetch sentence from API, convert string to nested array of characters
   const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
@@ -28,13 +26,13 @@ const App = () => {
           return wordArr;
         });
         
-        const newSentenceArr =  sentenceArr.map((array: string[], ind: number) => {      
-          if (ind % 2 === 1) {
-            const newArray = sentenceArr[ind - 1].concat(array);
+        const newSentenceArr =  sentenceArr.map((array: string[], index: number) => {      
+          if (index % 2 === 1) {
+            const newArray = sentenceArr[index - 1].concat(array);
             return newArray;
           }
 
-          if (ind === sentenceArr.length - 1) {
+          if (index === sentenceArr.length - 1) {
             return array;
           }   
         });
@@ -48,14 +46,44 @@ const App = () => {
       .catch(error => console.error(`Error: ${error}`));
   }
 
+  const memoizedValues = useMemo(() => {
+    if (values !== undefined && !values.length) {
+      sentence?.map((word: string[]) => {
+        const newWordArr = word.map((_char) => {
+          return "";
+        });
+        setValues((values: string[][]) => [...values as string[][], newWordArr]);
+      });  
+    }
+  }, [sentence]);
+
+  useEffect(() => {
+    getSentence();
+    memoizedValues;
+  }, [counter]);
+
   return (
     <div className="container text-center">
-      <h1>Word Scrambler</h1>
-      <Sentence sentence={sentence} />
-      <p>Guess the sentence! Start typing.</p>
-      <p>The yellow blocks are meant for spaces.</p> 
-      <Score score={score} />
-      <GuessingBlocks sentence={sentence} setScore={setScore} score={score} />
+      {
+        counter < 10
+        ? <div>
+            <h1>Word Scrambler</h1>
+            <Sentence sentence={sentence} />
+            <p>Guess the sentence! Start typing.</p>
+            <p>The yellow blocks are meant for spaces.</p> 
+            <Score score={score} />
+            <GuessingBlocks
+              sentence={sentence}
+              score={score}
+              setScore={setScore}
+              counter={counter}
+              setCounter={setCounter} 
+              values={values}
+              setValues={setValues}
+            />
+          </div>
+        : <Winner setCounter={setCounter} setScore={setScore} setValues={setValues} />  
+      }
     </div>
   );
 }
