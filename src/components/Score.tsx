@@ -1,9 +1,12 @@
 import React from 'react';
 
-const Score = (props: any) => {
+interface Props {
+  score: number
+}
 
+const Score = ({score}: Props) => {
   return (
-    <p>Score: {props.score}</p>
+    <p>Score: {score}</p>
   );
 }
 
