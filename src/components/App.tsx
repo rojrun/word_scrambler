@@ -5,7 +5,7 @@ import Score from './Score';
 import GuessingBlocks from './GuessingBlocks';
 import Winner from './Winner';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../sass/App.scss';
+import '../scss/App.scss';
 
 const App = () => {
   const [counter, setCounter] = useState<number>(1);
@@ -69,7 +69,7 @@ const App = () => {
         ? <div>
             <h1>Word Scrambler</h1>
             <Sentence sentence={sentence} />
-            <p>Guess the sentence! Start typing.</p>
+            <p className="mb-0">Guess the sentence! Start typing.</p>
             <p>The yellow blocks are meant for spaces.</p> 
             <Score score={score} />
             <GuessingBlocks

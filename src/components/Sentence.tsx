@@ -55,9 +55,7 @@ const Sentence = ({sentence = []}: Props) => {
   }
 
   return (
-    <div id="scrambled-word">
-      <h2>{scrambledSentence}</h2>
-    </div>
+    <h2 id="scrambled-word" className="bg-white py-4">{scrambledSentence}</h2>
   );
 }
 

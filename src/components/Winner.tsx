@@ -20,11 +20,11 @@ const Winner = ({setScore, setCounter, setValues}: Props) => {
   });
 
   return (
-    <div className="border border-primary py-5 my-5">
+    <div className="bg-white py-5" id="winner">
       <h2>You Win!!</h2>
       <button
         type="button"
-        className="btn btn-success px-4 m-3"
+        className="btn button-next text-white px-4 m-3"
         ref={buttonRef}
         onClick={handlePlayAgain}
       >
