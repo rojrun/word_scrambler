@@ -13,14 +13,14 @@ const App = () => {
   const [score, setScore] = useState<number>(0);
   const [values, setValues] = useState<string[][]>([]);
 
-  // Fetch sentence from API, convert string to nested array of characters
-  const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
+  // Fetch sentence from API, convert string to nested array of characters 
   const getSentence = (): void => {
+    const url = `https://api.hatchways.io/assessment/sentences/${counter}`;
     axios.get(url)
       .then(response => {
         const data: string = response.data.data.sentence;
         const newData = data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
-        
+
         const sentenceArr = newData.split(/(\s+)/).map((word: string): string[] => {
           const wordArr = word.split("");
           return wordArr;
@@ -58,19 +58,21 @@ const App = () => {
   }, [sentence]);
 
   useEffect(() => {
-    getSentence();
+    if (counter <= 10) {
+      getSentence();
+    }
     memoizedValues;
   }, [counter]);
 
   return (
     <div className="container text-center">
       {
-        counter < 10
+        counter <= 10
         ? <div>
             <h1>Word Scrambler</h1>
             <Sentence sentence={sentence} />
             <p className="mb-0">Guess the sentence! Start typing.</p>
-            <p>The yellow blocks are meant for spaces.</p> 
+            <p>The orange blocks are meant for spaces.</p> 
             <Score score={score} />
             <GuessingBlocks
               sentence={sentence}

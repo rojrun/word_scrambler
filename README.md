@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Word Scrambler
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Descramble all the words in each sentence.
 
 ## Available Scripts
 

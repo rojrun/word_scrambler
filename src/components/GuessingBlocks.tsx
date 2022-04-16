@@ -71,41 +71,41 @@ const GuessingBlocks = ({sentence = [], score, setScore, counter, setCounter, va
   }
 
   const handleOnClick = () => {
-    setCounter(counter + 1);
     setValues([]);
-    setCorrect(0);
-    setTotalInputs(0);
-    setCursor([0, 0]);
     document.querySelectorAll('[id=guess]').forEach((element) => {
       const classNames = ["bg-correct", "text-white"];
       if (classNames.some(classNames => element.classList.contains(classNames))) {
         classNames.forEach(item => element.classList.remove(item));
       }
-    });
+    }); 
+    setCorrect(0);
+    setTotalInputs(0);
+    setCursor([0, 0]);
+    setCounter(counter + 1);
   }
 
   useEffect(() => {
+    countTotalInputs();
+    correctCallback();
     const [wordIndex, charIndex] = cursor;
     inputRef[wordIndex]?.[charIndex]?.current.focus();
-    countTotalInputs();
-    correctCallback();   
     buttonRef.current?.focus();
-  }, [sentence, totalInputs, cursor, inputRef, counter]);
+  }, [sentence, totalInputs, cursor, inputRef]);
   
   return (
     <div id="blocks_and_button">
       <div id="blocks">
-        {
+        { 
           sentence.map((nestedArr: string[], wordIndex: number) => {
             return (
-              <div key={wordIndex.toString()} className="row">
+              <div key={wordIndex} className="row">
                 {
                   nestedArr.map((char: string, charIndex: number) => {
                     return (
                       <input
-                        key={charIndex.toString()} 
+                        key={charIndex} 
                         type="text" id="guess" autoComplete="off"
-                        className={`col text-center m-1 px-0 ${/\s/.test(char) ? "bg-space" : ""}`}
+                        className={`col text-center m-1 px-0 ${(/\s/).test(char) ? "bg-space" : ""}`}
                         onChange={(e) => handleGuess(e.target.value, wordIndex, charIndex)}
                         maxLength={1}
                         ref={inputRef[wordIndex][charIndex]}
