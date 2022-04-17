@@ -70,7 +70,7 @@ const App = () => {
         counter <= 10
         ? <div>
             <h1>Word Scrambler</h1>
-            <Sentence sentence={sentence} />
+            <Sentence sentence={sentence} counter={counter}/>
             <p className="mb-0">Guess the sentence! Start typing.</p>
             <p>The orange blocks are meant for spaces.</p> 
             <Score score={score} />

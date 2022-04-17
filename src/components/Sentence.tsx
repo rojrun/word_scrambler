@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 
 interface Props {
-  sentence: string[][]
+  sentence: string[][];
+  counter: number;
 }
 
-const Sentence = ({sentence = []}: Props) => {
+const Sentence = ({sentence = [], counter}: Props) => {
   const [scrambledSentence, setScrambledSentence] = useState<string>("");
   
   useEffect(() => {
@@ -55,7 +56,10 @@ const Sentence = ({sentence = []}: Props) => {
   }
 
   return (
-    <h2 id="scrambled-word" className="bg-white py-4">{scrambledSentence}</h2>
+    <div id="scrambled-word-block" className="bg-white p-4 mb-4">
+      <h2 id="scrambled-word">{scrambledSentence}</h2>
+      <p className="mb-0 text-end">sentence {counter} of 10</p>
+    </div>
   );
 }
 
