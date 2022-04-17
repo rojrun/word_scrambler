@@ -24,7 +24,7 @@ body {
       @include poly-fluid-sizing("width", $map);
 
       h1 {
-        $map: (320px: 40px, 481px: 65px, 769px: 66px, 1025px: 67px, 1201px: 104px);
+        $map: (320px: 30px, 481px: 40px, 769px: 46px, 1025px: 52px, 1201px: 65px);
         @include poly-fluid-sizing("font-size", $map);
       }
 
@@ -39,7 +39,7 @@ body {
       }
       
       .btn:focus {
-        box-shadow: 0 0 0 0.7rem rgba(13, 37, 253, 0.411);
+        box-shadow: 0 0 0 0.5rem rgba(13, 37, 253, 0.411);
       }
     }
   }
